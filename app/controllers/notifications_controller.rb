@@ -1,14 +1,20 @@
 class NotificationsController < ApplicationController
-  before_action :set_subscriber, only: [:receiver]
+  before_action :set_subscriber, only: [:incoming]
   
   # Receive incoming SMS
   def incoming
     begin
       if @subscriber.valid?
-        respond('Great! You will now be subscribed to notifications from TWBC!')
+        output = 'Great! You will now be subscribed to notifications from TWBC!'
       else
-        respond('Something went wrong. Try again.')
+        output = 'Something went wrong. Try again.'
       end
+    rescue
+      output = 'Something went wrong. Try again.'
+    end
+
+    # Render the TwiML response
+    respond(output)
   end
 
   # Create a new notification
@@ -21,7 +27,7 @@ class NotificationsController < ApplicationController
     # See above ---> before_action :set_subscriber, only: [:receiver]
     def set_subscriber
       # Grab the phone number from incoming Twilio params
-      @phone_number = Sanitize.clean(params[:From])
+      @phone_number = params[:From]
 
       # Find the subscriber associated with this number or create a new one
       @subscriber = Subscriber.first_or_create(:phone_number => @phone_number)
@@ -31,9 +37,11 @@ class NotificationsController < ApplicationController
 
     # Send an SMS back to the Subscriber
     def respond(message)
-      Twilio::TwiML::Response.new do |r|
+      puts "************************ #{message}"
+      response = Twilio::TwiML::Response.new do |r|
         r.Message message
-      end.text
+      end
+      render text: response.text
     end
 
 end
