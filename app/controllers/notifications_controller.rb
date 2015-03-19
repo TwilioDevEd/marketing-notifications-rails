@@ -34,6 +34,22 @@ class NotificationsController < ApplicationController
 
   # Create a new notification
   def new
+    message = params[:message]
+    puts message
+    image_url = params[:image_url]
+
+    Subscriber.all.each do |s|
+      begin
+        s.send_message(message, image_url)
+        flash[:success] = "Messages on their way!"
+      rescue 
+        flash[:alert] = "Something when wrong."
+      end
+    end
+    redirect_to '/'
+  end
+
+  def index
 
   end
 

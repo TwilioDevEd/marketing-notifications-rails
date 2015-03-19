@@ -1,0 +1,14 @@
+<h1>SMS Notifications</h1>
+<p>Use this form to send MMS notifications to any subscribers.</p>
+
+<%= form_tag 'new/', method: "post" do %>
+  <div class="form-group">
+    <%= label_tag :message, "Enter a Message:" %>
+    <%= text_field_tag :message, '', class: "form-control", placeholder: "New things are happening!" %>
+  </div>
+  <div class="form-group">
+    <%= label_tag :image_url, "Image Url:" %>
+    <%= text_field_tag :image_url, '', class: "form-control", placeholder: "http://fake.twilio.com/some_image.png" %>
+  </div>
+  <button type="submit" class="btn btn-primary">Send Message</button>
+<% end -%>
