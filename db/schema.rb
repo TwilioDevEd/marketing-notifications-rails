@@ -18,8 +18,9 @@ ActiveRecord::Schema.define(version: 20150318180231) do
 
   create_table "subscribers", force: :cascade do |t|
     t.string   "phone_number"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.boolean  "subscribed",   default: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
 end

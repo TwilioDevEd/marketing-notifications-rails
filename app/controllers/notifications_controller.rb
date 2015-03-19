@@ -4,13 +4,28 @@ class NotificationsController < ApplicationController
   # Receive incoming SMS
   def incoming
     begin
-      if @subscriber.valid?
-        output = 'Great! You will now be subscribed to notifications from TWBC!'
+      if @new_subscriber
+        output = "Thanks for contacting TWBC! Text 'subscribe' if you would to receive updates via text message."
       else
-        output = 'Something went wrong. Try again.'
+        if @body == 'subscribe' || @body == 'unsubscribe'
+          # If the user has subscribed flip the bit
+          # and let them know
+          subscribed = @body === 'subscribe'
+          @subscriber.update :subscribed => subscribed
+
+          # Respond appropriately
+          output = "You are now subscribed for updates."
+          if !@subscriber.subscribed
+            output = "You have unsubscribed from notifications. Test 'subscribe' to start receieving updates again"
+          end
+        else
+          # If we don't recognize the command, text back with the list of
+          # available commands
+          output = "Sorry, we don't recognize that command. Available commands are: 'subscribe' or 'unsubscribe'."
+        end
       end
     rescue
-      output = 'Something went wrong. Try again.'
+      output = "Something went wrong. Try again."
     end
 
     # Render the TwiML response
@@ -30,6 +45,7 @@ class NotificationsController < ApplicationController
       @phone_number = params[:From]
 
       # Find the subscriber associated with this number or create a new one
+      @new_subscriber = Subscriber.exists?(:phone_number => @phone_number) === false
       @subscriber = Subscriber.first_or_create(:phone_number => @phone_number)
 
       @body = if params[:Body].nil? then '' else params[:Body].downcase end
@@ -37,7 +53,6 @@ class NotificationsController < ApplicationController
 
     # Send an SMS back to the Subscriber
     def respond(message)
-      puts "************************ #{message}"
       response = Twilio::TwiML::Response.new do |r|
         r.Message message
       end
