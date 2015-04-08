@@ -1,6 +1,6 @@
 .step(data-title='User Story: Manage Subscriptions', data-file='app/controllers/notifications_controller.rb', data-highlight='')
   :markdown
-    ### User Story: Manage Subscriptions
+    ## User Story: Manage Subscriptions
 
     <blockquote>As a User, I would like to manage my subscription status via text message.</blockquote>
 
@@ -16,25 +16,25 @@
 
 .step(data-title='Processing an Incoming Message', data-file='app/controllers/notifications_controller.rb', data-highlight='51-70')
   :markdown
-    ### Processing an Incoming Message
+    ## Processing an Incoming Message
 
     This internal function handles parsing the incoming message from the user and executing conditional logic to see if they have issued us a command we recognize. It's executed after we have already hit the database once to retrieve the current `Subscriber` model.
 
 .step(data-title='Handling a Subscription Command', data-file='app/controllers/notifications_controller.rb', data-highlight="56-63")
   :markdown
-    ### Handling a Subscription Command
+    ## Handling a Subscription Command
 
     If the user has texted `subscribe` or `unsubscribe`, we will update their subscription status in the database. We will then respond to them via SMS with the opposite command to either opt in to updates or opt out.
 
 .step(data-title='Listing Available Commands', data-file='app/controllers/notifications_controller.rb', data-highlight='65-67')
   :markdown
-    ### Listing Available Commands
+    ## Listing Available Commands
 
     If they texted in something we don't recognize, we respond to them with a listing of all known commands. We could take this further and implement "help" text for each command, but in this simple use case the commands should be self-explanatory.
 
 .step(data-title='Responding with TwiML', data-file='app/controllers/notifications_controller.rb', data-highlight='72-79')
   :markdown
-    ### Responding with TwiML
+    ## Responding with TwiML
 
     The Twilio Ruby library includes the handy `TwiML::Response` helper which handles generating a TwiML (XML) response on the fly. Now to close out the interaction with our incoming message we just need to call `respond(output)` at the end of our controller.
 
