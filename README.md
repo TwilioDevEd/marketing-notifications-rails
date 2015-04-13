@@ -20,11 +20,27 @@ $ rails server
 
 Then visit the application at http://localhost:3000/
 
-## Deploy to Heroku
+In order to receive subscribers you will need to point a twilio number to the app running in production. To do that follow the step to Deploy to Heroku below.
+
+## Step 1. Deploy to Heroku
 
 Hit the button!
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
+## Step 2. Configure your Twilio number
+
+Go to your dashboard on [Twilio](https://www.twilio.com/user/account/phone-numbers/incoming). Click on Twilio Numbers and choose a number to setup.
+
+On the phone number page, enter `https://<appname.herokuapp.com>/incoming` into the _Messaging_ Request URL field.
+
+[![Request URL](http://howtodocs.s3.amazonaws.com/setup-twilio-number.png)]
+
+## Step 3. Wrap Up!
+
+Now your subscribers will be able to text your new Twilio number to 'Subscribe' to your Marketing Notifications line.
+
+Congratulations!
 
 ## Dependencies
 
