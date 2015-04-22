@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SMS and MMS Marketing Notifications</title>
+    <style>
+      body, html {
+        height:100%;
+        width:100%;
+        padding:0;
+        margin:0;
+        overflow:hidden;
+        background-color:#ddd;
+      }
+      .wrapper {
+        height:100%;
+        width:100%;
+      }
+    </style>
+    <link rel="shortcut icon" href="//twilio.com/bundles/marketing/img/favicons/favicon.ico">
+    <link rel="apple-touch-icon" href="//twilio.com/bundles/marketing/img/favicons/favicon_57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="//twilio.com/bundles/marketing/img/favicons/favicon_72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="//twilio.com/bundles/marketing/img/favicons/favicon_114.png">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="viewsaurus.css">
+  </head>
+  <body>
+    <div class="wrapper">
+<div id="viewsaurus" data-title="SMS and MMS Marketing Notifications">
+  <div class="saurus-panes">
+    <div class="saurus-prose">
+      <div class="saurus-prose-header">
+        <div class="title-outer"><span class="step-title">SMS and MMS Marketing Notifications</span></div>
+      </div>
+      <div class="saurus-nav-buttons">
+        <div class="saurus-nav-button nav-overview">
+          <div class="saurus-nav-button-inner"><i class="fa fa-fw fa-list"></i></div>
+          <div class="nav-divider"></div>
+        </div>
+        <div class="saurus-nav-button nav-previous">
+          <div class="saurus-nav-button-inner"><a href=""> <i class="fa fa-fw fa-play fa-rotate-180"></i></a></div>
+          <div class="nav-divider"></div>
+        </div>
+        <div class="saurus-nav-button nav-next clickable">
+          <div class="saurus-nav-button-inner"><a href="#1"> <i class="fa fa-fw fa-play"></i></a></div>
+        </div>
+        <div class="saurus-next-title"><span class="next-title-inner"></span></div>
+      </div>
+      <div class="saurus-progress-bar"></div>
+      <div class="saurus-start">
+        <p>SMS and MMS messages are a personal way to engage with users, offering a much higher open rate than e-mail and more impact than a tweet. Learn how to engage customers in a mobile marketing campaign using SMS and MMS messages.</p><a href="#0">Start Tutorial</a>
+      </div>
+      <div class="saurus-content">
+<div data-title="Subscribing for Notifications" class="chapter">
+  <div data-title="Introduction" class="step"><h2 id="sms-and-mms-marketing-notifications">SMS and MMS Marketing Notifications</h2>
+<p>Ready to implement SMS and MMS marketing notifications? Here&#39;s how it works at a high level:</p>
+<ol>
+<li><p>A user you&#39;d like to reach sends an SMS text message to a Twilio phone number you advertise in print, online, or in TV advertising</p>
+</li>
+<li><p>Your application confirms that the user wants to receive SMS and MMS notifications from your application</p>
+</li>
+<li><p>An administrator or marketing campaign manager uses a web form to craft a message that will go out to all subscribers via SMS/MMS message</p>
+</li>
+</ol>
+<h2 id="building-blocks">Building Blocks</h2>
+<p>To get this done, you&#39;ll be working with the following Twilio APIs:</p>
+<ul>
+<li><a href="http://www.local.twilio.com/docs/api/twiml">TwiML</a> and the <a href="/docs/api/twiml/sms/message">&lt;Message&gt; Verb</a>: We&#39;ll use TwiML to manage interactions initiated by the user via SMS</li>
+<li><a href="/docs/api/rest/sending-sms">Messages Resource</a>: We will use the REST API to broadcast messages out to all subscribers</li>
+</ul>
+<h2 id="how-to-read-this-tutorial">How To Read This Tutorial</h2>
+<p>In this tutorial, we will be working through a series of <a href="http://en.wikipedia.org/wiki/User_story">user stories</a> that describe how to fully implement this Twilio-powered application. Each will describe a major step on the road to implementing this functionality yourself.</p>
+<p>Let&#39;s get started! Click the right arrow to move on to the next step of the tutorial.</p>
+
+  </div>
+  <div data-title="User Story: Subscribe for Updates" data-file="app/models/subscriber.rb" class="step">
+    <h2>User Story: Subscribe for Updates</h2>
+    <blockquote>As a User, I would like to sign up via SMS to receive SMS or MMS updates on my phone.</blockquote><p>In order to send out marketing notifications to a user, we need to provide a way for them to opt in to receive updates. We accomplish this by having them send a text message to a Twilio number in our account, and then save their phone number in our database.</p>
+<p>To make this happen, we will need to implement a couple of things:</p>
+<ul>
+<li>a model object to save information about a <code>Subscriber</code></li>
+<li>a <a href="http://rubyonrails.org/">Ruby on Rails</a> web application that can respond to <a href="/docs/api/twiml/sms/twilio_request">Twilio webhook requests</a> when our number gets an incoming text.</li>
+</ul>
+<p>Let&#39;s start by looking at the model for a <code>Subscriber</code>.</p>
+
+  </div>
+  <div data-title="Creating a Subscriber" data-file="app/models/subscriber.rb" class="step"><h2 id="creating-a-subscriber">Creating a Subscriber</h2>
+<p>We begin by generating an <a href="http://guides.rubyonrails.org/active_record_basics.html">Active Record</a> model that we will store in a postgres database. For our purposes we don&#39;t need to store very much information about the subscriber - just their phone number (so we can send them updates) and a boolean flag indicating whether or not they are opted-in to receive updates.</p>
+<p>We&#39;ll use the <a href="http://guides.rubyonrails.org/command_line.html#rails-generate">Rails generate command</a> to create our model:
+<code>bin/rails generate model Subscriber phone_number:string subscribed:boolean</code></p>
+<p>This generator creates our model, migration and schema for us. Now all we need to run is <code>rake db:migrate</code> and we have a table of Subscribers.</p>
+<p>Now that we have a model object to save a subscriber, let&#39;s move up to the controller level to see how we create one.</p>
+
+  </div>
+  <div data-title="Creating a Webhook Route" data-file="config/routes.rb" class="step"><h2 id="creating-a-webhook-route">Creating a Webhook Route</h2>
+<p>In Rails we often generate our routes, but this time we&#39;ll define the few we have by hand. When Twilio receives an incoming message, it will send an HTTP POST request to our server.</p>
+<p>Here, we configure all the routes our application will handle, and map those routes to controller functions.</p>
+
+  </div>
+  <div data-title="Mapping the Webhook to a Route" data-file="config/routes.rb" data-highlight="4-5" class="step"><h2 id="mapping-the-webhook-to-a-route">Mapping the Webhook to a Route</h2>
+<p>Click on one of your Twilio numbers on the <a href="/user/account/phone-numbers/incoming">Manage Phone Numbers</a> screen in the account portal. For this number, you will need to configure a public server address for your application, as well as the <code>/incoming</code> route which Twilio will POST to when your number gets any incoming messages:</p>
+<p><img src="//s3.amazonaws.com/howtodocs/marketing-notifications-webhook.png" alt="Twilio Number Configuration"></p>
+<p>Let&#39;s dive into the controller function that will handle incoming messages next.</p>
+
+  </div>
+  <div data-title="Handling An Incoming Message" data-file="app/controllers/notifications_controller.rb" data-highlight="" class="step"><h2 id="handling-an-incoming-message">Handling An Incoming Message</h2>
+<p>Since the <code>incoming</code> function will be called every time our application receives a message, it has a lot it needs to do. We&#39;ll look at how this function works piece by piece as the tutorial continues, but let&#39;s focus on the first message a user sends us for now.</p>
+
+  </div>
+  <div data-title="Creating a New Subscriber" data-file="app/controllers/notifications_controller.rb" data-highlight="3-16" class="step"><h2 id="creating-a-new-subscriber">Creating a New Subscriber</h2>
+<p>We begin by getting the texter&#39;s phone number from the <a href="/docs/api/twiml/sms/twilio_request">incoming Twilio request</a>. Now, we need to find a <code>Subscriber</code> model with that phone number (this should be a unique property of the <code>Subscriber</code>).</p>
+<p>If there&#39;s no subscriber with this phone number, we create one, save it, and respond with a message asking them to text &quot;subscribe&quot; to confirm that they want to receive messages from us.</p>
+<p>And that&#39;s all we want at this step! We&#39;ve created a <code>Subscriber</code> model to keep track of the people that want our messages, and saved them in the database when they text us for the first time.</p>
+<p>Next, let&#39;s look at the logic we need to put in place to allow them to manage their subscription status.</p>
+
+  </div>
+</div>
+<div data-title="Managing Subscriptions" class="chapter">
+  <div data-title="User Story: Manage Subscriptions" data-file="app/controllers/notifications_controller.rb" data-highlight="" class="step">
+    <h2>User Story: Manage Subscriptions</h2>
+    <blockquote>As a User, I would like to manage my subscription status via text message.</blockquote><p>We want to provide the user with two SMS commands to manage their subscription status: <code>subscribe</code> and <code>unsubscribe</code>.  These commands will toggle a boolean flag for their <code>Subscriber</code> record in the database, and will determine whether or not they receive messages from our marketing campaign. Because we&#39;re not jerks, we don&#39;t opt them in automatically - rather, we have them confirm that they want to receive messages from us first.</p>
+<p>To make this happen, we will need to update the controller logic which handles the incoming text message to do a couple things:</p>
+<ul>
+<li>If the texter is a person already in the database, parse the message they sent to see if it&#39;s a command we recognize</li>
+<li>If it is a <code>subscribe</code> or <code>unsubscribe</code> command, update their subscription status in the database</li>
+<li>If it is a command we don&#39;t recognize, send them a message explaining available commands.</li>
+</ul>
+<p>Let&#39;s go back into our controller function to see how this works.</p>
+
+  </div>
+  <div data-title="Processing an Incoming Message" data-file="app/controllers/notifications_controller.rb" data-highlight="51-70" class="step"><h2 id="processing-an-incoming-message">Processing an Incoming Message</h2>
+<p>This internal function handles parsing the incoming message from the user and executing conditional logic to see if they have issued us a command we recognize. It&#39;s executed after we have already hit the database once to retrieve the current <code>Subscriber</code> model.</p>
+
+  </div>
+  <div data-title="Handling a Subscription Command" data-file="app/controllers/notifications_controller.rb" data-highlight="56-63" class="step"><h2 id="handling-a-subscription-command">Handling a Subscription Command</h2>
+<p>If the user has texted <code>subscribe</code> or <code>unsubscribe</code>, we will update their subscription status in the database. We will then respond to them via SMS with the opposite command to either opt in to updates or opt out.</p>
+
+  </div>
+  <div data-title="Listing Available Commands" data-file="app/controllers/notifications_controller.rb" data-highlight="64-66" class="step"><h2 id="listing-available-commands">Listing Available Commands</h2>
+<p>If they texted in something we don&#39;t recognize, we respond to them with a listing of all known commands. We could take this further and implement &quot;help&quot; text for each command, but in this simple use case the commands should be self-explanatory.</p>
+
+  </div>
+  <div data-title="Responding with TwiML" data-file="app/controllers/notifications_controller.rb" data-highlight="72-77" class="step"><h2 id="responding-with-twiml">Responding with TwiML</h2>
+<p>The Twilio Ruby library includes the handy <code>TwiML::Response</code> helper which handles generating a TwiML (XML) response on the fly. Now to close out the interaction with our incoming message we just need to call <code>respond(output)</code> at the end of our controller.</p>
+<p>That&#39;s it for the user-facing commands! Now, we need to provide our marketing team with an interface to send messages out to all subscribers. Let&#39;s take a look at that next.</p>
+
+  </div>
+</div>
+<div data-title="Sending Messages" class="chapter">
+  <div data-title="User Story: Send SMS or MMS Notifications" data-file="app/models/subscriber.rb" class="step">
+    <h2>User Story: Send SMS or MMS Notifications</h2>
+    <blockquote>As an Administrator, I want to be able to send an MMS with a message, and optional picture from a web interface.</blockquote><p>Now that we have a list of subscribers for our awesome SMS and MMS content, we need to provide our marketing team some kind of interface to send out messages.</p>
+<p>To make this happen, we will need to update our application to do a few things:</p>
+<ul>
+<li>Create a route to render a web form that an administrator can interact with</li>
+<li>Create a controller function to handle the form submission</li>
+<li>Use the Twilio API to send out messages to all current subscribers</li>
+</ul>
+<p>Let&#39;s begin at the front end with the web form our administrators will interact with.</p>
+
+  </div>
+  <div data-title="Creating the Web Form" data-file="app/views/notifications/index.html.erb" class="step"><h2 id="creating-the-web-form">Creating the Web Form</h2>
+<p>Here we use Jade to render an HTML document containing a web form to be used by our marketing campaign administrators.</p>
+<p>It just has a couple of fields - one to specify a text message, and another to specify an optional URL to an image on the public Internet that we could send via MMS.</p>
+<p>Let&#39;s go to the controller next to see what happens when the form is submitted.</p>
+
+  </div>
+  <div data-title="Handling the Form Submission" data-file="app/controllers/notifications_controller.rb" data-highlight="28-42" class="step"><h2 id="handling-the-form-submission">Handling the Form Submission</h2>
+<p>On the server, we grab the message text and image URL from the POST body, then loop through all Subscribers and call a function on our <code>Subscriber</code> model to send the message.</p>
+<p>When the messages are on their way, we redirect back to the same web form with a <a href="http://api.rubyonrails.org/classes/ActionDispatch/Flash.html">flash</a> message containing feedback about the messaging attempt.</p>
+<p>Let&#39;s jump into the model now to see how these messages are sent out.</p>
+
+  </div>
+  <div data-title="Using the Twilio REST Client" data-file="app/models/subscriber.rb" data-highlight="3-14" class="step"><h2 id="using-the-twilio-rest-client">Using the Twilio REST Client</h2>
+<p>When the model object is loaded, it creates a <a href="http://twilio.github.io/twilio-node">Twilio REST API client</a> that it can use to send SMS and MMS messages. The client requires your Twilio account credentials (an account SID and auth token), which can be found <a href="/user/account/voice-messaging">in the account portal</a>.</p>
+<p>Next all we need to do is call <code>messages.create</code> on the client object in order to send our message. The Twilio Message API call requires a &#39;From&#39; and &#39;To&#39; parameter, and either a &#39;Body&#39; or a &#39;MediaUrl&#39; attribute (or both).</p>
+<p>These nine lines of code are all you need to send an SMS in Rails.</p>
+
+  </div>
+  <div data-title="All Done!" data-file="app/models/subscriber.rb" class="step"><h2 id="all-done-">All Done!</h2>
+<p>That&#39;s it! We&#39;ve just implemented a an opt-in process and an administrative interface to run an SMS and MMS marketing campaign. Now all you need is killer content to share with your users via text or MMS.</p>
+<p>Thanks for checking out this tutorial! If you have any feedback to share with us, we&#39;d love to hear it. Tweet <a href="http://twitter.com/twilio">@twilio</a> to let us know what you think.</p>
+
+  </div>
+</div>
+<div class="saurus-files" style="display:none;"><textarea class="saurus-file" data-file="app/models/subscriber.rb" data-mode="ruby">Y2xhc3MgU3Vic2NyaWJlciA8IEFjdGl2ZVJlY29yZDo6QmFzZQoKICAjIE5vdGlmeSBvdXIgYXBwb2ludG1lbnQgYXR0ZW5kZWUgWCBtaW51dGVzIGJlZm9yZSB0aGUgYXBwb2ludG1lbnQgdGltZQogIGRlZiBzZW5kX21lc3NhZ2UobXNnLCBpbWFnZV91cmwpCiAgICBAdHdpbGlvX251bWJlciA9IEVOVlsnVFdJTElPX05VTUJFUiddCiAgICBAY2xpZW50ID0gVHdpbGlvOjpSRVNUOjpDbGllbnQubmV3IEVOVlsnVFdJTElPX0FDQ09VTlRfU0lEJ10sIEVOVlsnVFdJTElPX0FVVEhfVE9LRU4nXQogICAgbWVzc2FnZSA9IEBjbGllbnQuYWNjb3VudC5tZXNzYWdlcy5jcmVhdGUoCiAgICAgIDpmcm9tID0+IEB0d2lsaW9fbnVtYmVyLAogICAgICA6dG8gPT4gc2VsZi5waG9uZV9udW1iZXIsCiAgICAgIDpib2R5ID0+IG1zZywKICAgICAgOm1lZGlhX3VybCA9PiBpbWFnZV91cmwKICAgICkKICAgIHB1dHMgbWVzc2FnZS50bwogIGVuZAoKZW5kCg==</textarea>
+<textarea class="saurus-file" data-file="config/routes.rb" data-mode="ruby">UmFpbHMuYXBwbGljYXRpb24ucm91dGVzLmRyYXcgZG8KICAjIFRoZSBwcmlvcml0eSBpcyBiYXNlZCB1cG9uIG9yZGVyIG9mIGNyZWF0aW9uOiBmaXJzdCBjcmVhdGVkIC0+IGhpZ2hlc3QgcHJpb3JpdHkuCiAgIyBTZWUgaG93IGFsbCB5b3VyIHJvdXRlcyBsYXkgb3V0IHdpdGggInJha2Ugcm91dGVzIi4KICBnZXQgJ2luY29taW5nLycgPT4gJ25vdGlmaWNhdGlvbnMjaW5jb21pbmcnCiAgcG9zdCAnbmV3LycgPT4gJ25vdGlmaWNhdGlvbnMjbmV3JwoKICAjIFlvdSBjYW4gaGF2ZSB0aGUgcm9vdCBvZiB5b3VyIHNpdGUgcm91dGVkIHdpdGggInJvb3QiCiAgcm9vdCAnbm90aWZpY2F0aW9ucyNpbmRleCcKCiAgIyBFeGFtcGxlIG9mIHJlZ3VsYXIgcm91dGU6CiAgIyAgIGdldCAncHJvZHVjdHMvOmlkJyA9PiAnY2F0YWxvZyN2aWV3JwoKICAjIEV4YW1wbGUgb2YgbmFtZWQgcm91dGUgdGhhdCBjYW4gYmUgaW52b2tlZCB3aXRoIHB1cmNoYXNlX3VybChpZDogcHJvZHVjdC5pZCkKICAjICAgZ2V0ICdwcm9kdWN0cy86aWQvcHVyY2hhc2UnID0+ICdjYXRhbG9nI3B1cmNoYXNlJywgYXM6IDpwdXJjaGFzZQoKICAjIEV4YW1wbGUgcmVzb3VyY2Ugcm91dGUgKG1hcHMgSFRUUCB2ZXJicyB0byBjb250cm9sbGVyIGFjdGlvbnMgYXV0b21hdGljYWxseSk6CiAgIyAgIHJlc291cmNlcyA6cHJvZHVjdHMKCiAgIyBFeGFtcGxlIHJlc291cmNlIHJvdXRlIHdpdGggb3B0aW9uczoKICAjICAgcmVzb3VyY2VzIDpwcm9kdWN0cyBkbwogICMgICAgIG1lbWJlciBkbwogICMgICAgICAgZ2V0ICdzaG9ydCcKICAjICAgICAgIHBvc3QgJ3RvZ2dsZScKICAjICAgICBlbmQKICAjCiAgIyAgICAgY29sbGVjdGlvbiBkbwogICMgICAgICAgZ2V0ICdzb2xkJwogICMgICAgIGVuZAogICMgICBlbmQKCiAgIyBFeGFtcGxlIHJlc291cmNlIHJvdXRlIHdpdGggc3ViLXJlc291cmNlczoKICAjICAgcmVzb3VyY2VzIDpwcm9kdWN0cyBkbwogICMgICAgIHJlc291cmNlcyA6Y29tbWVudHMsIDpzYWxlcwogICMgICAgIHJlc291cmNlIDpzZWxsZXIKICAjICAgZW5kCgogICMgRXhhbXBsZSByZXNvdXJjZSByb3V0ZSB3aXRoIG1vcmUgY29tcGxleCBzdWItcmVzb3VyY2VzOgogICMgICByZXNvdXJjZXMgOnByb2R1Y3RzIGRvCiAgIyAgICAgcmVzb3VyY2VzIDpjb21tZW50cwogICMgICAgIHJlc291cmNlcyA6c2FsZXMgZG8KICAjICAgICAgIGdldCAncmVjZW50Jywgb246IDpjb2xsZWN0aW9uCiAgIyAgICAgZW5kCiAgIyAgIGVuZAoKICAjIEV4YW1wbGUgcmVzb3VyY2Ugcm91dGUgd2l0aCBjb25jZXJuczoKICAjICAgY29uY2VybiA6dG9nZ2xlYWJsZSBkbwogICMgICAgIHBvc3QgJ3RvZ2dsZScKICAjICAgZW5kCiAgIyAgIHJlc291cmNlcyA6cG9zdHMsIGNvbmNlcm5zOiA6dG9nZ2xlYWJsZQogICMgICByZXNvdXJjZXMgOnBob3RvcywgY29uY2VybnM6IDp0b2dnbGVhYmxlCgogICMgRXhhbXBsZSByZXNvdXJjZSByb3V0ZSB3aXRoaW4gYSBuYW1lc3BhY2U6CiAgIyAgIG5hbWVzcGFjZSA6YWRtaW4gZG8KICAjICAgICAjIERpcmVjdHMgL2FkbWluL3Byb2R1Y3RzLyogdG8gQWRtaW46OlByb2R1Y3RzQ29udHJvbGxlcgogICMgICAgICMgKGFwcC9jb250cm9sbGVycy9hZG1pbi9wcm9kdWN0c19jb250cm9sbGVyLnJiKQogICMgICAgIHJlc291cmNlcyA6cHJvZHVjdHMKICAjICAgZW5kCmVuZAo=</textarea>
+<textarea class="saurus-file" data-file="app/controllers/notifications_controller.rb" data-mode="ruby">Y2xhc3MgTm90aWZpY2F0aW9uc0NvbnRyb2xsZXIgPCBBcHBsaWNhdGlvbkNvbnRyb2xsZXIKCiAgIyBSZWNlaXZlIGluY29taW5nIFNNUwogIGRlZiBpbmNvbWluZwogICAgIyBHcmFiIHRoZSBwaG9uZSBudW1iZXIgZnJvbSBpbmNvbWluZyBUd2lsaW8gcGFyYW1zCiAgICBAcGhvbmVfbnVtYmVyID0gcGFyYW1zWzpGcm9tXQoKICAgICMgRmluZCB0aGUgc3Vic2NyaWJlciBhc3NvY2lhdGVkIHdpdGggdGhpcyBudW1iZXIgb3IgY3JlYXRlIGEgbmV3IG9uZQogICAgQG5ld19zdWJzY3JpYmVyID0gU3Vic2NyaWJlci5leGlzdHM/KDpwaG9uZV9udW1iZXIgPT4gQHBob25lX251bWJlcikgPT09IGZhbHNlCiAgICBAc3Vic2NyaWJlciA9IFN1YnNjcmliZXIuZmlyc3Rfb3JfY3JlYXRlKDpwaG9uZV9udW1iZXIgPT4gQHBob25lX251bWJlcikKCiAgICBAYm9keSA9IGlmIHBhcmFtc1s6Qm9keV0ubmlsPyB0aGVuICcnIGVsc2UgcGFyYW1zWzpCb2R5XS5kb3duY2FzZSBlbmQKICAgIGJlZ2luCiAgICAgIGlmIEBuZXdfc3Vic2NyaWJlcgogICAgICAgIG91dHB1dCA9ICJUaGFua3MgZm9yIGNvbnRhY3RpbmcgVFdCQyEgVGV4dCAnc3Vic2NyaWJlJyBpZiB5b3Ugd291bGQgdG8gcmVjZWl2ZSB1cGRhdGVzIHZpYSB0ZXh0IG1lc3NhZ2UuIgogICAgICBlbHNlCiAgICAgICAgIyBQcm9jZXNzIHRoZSBjb21tYW5kIGZyb20gb3VyIFN1YnNjcmliZXIKICAgICAgICBvdXRwdXQgPSBwcm9jZXNzX21lc3NhZ2UoQGJvZHksIEBzdWJzY3JpYmVyKQogICAgICBlbmQKICAgIHJlc2N1ZQogICAgICBvdXRwdXQgPSAiU29tZXRoaW5nIHdlbnQgd3JvbmcuIFRyeSBhZ2Fpbi4iCiAgICBlbmQKCiAgICAjIFJlbmRlciB0aGUgVHdpTUwgcmVzcG9uc2UKICAgIHJlc3BvbmQob3V0cHV0KQogIGVuZAoKICAjIENyZWF0ZSBhIG5ldyBub3RpZmljYXRpb24KICBkZWYgbmV3CiAgICBtZXNzYWdlID0gcGFyYW1zWzptZXNzYWdlXQogICAgaW1hZ2VfdXJsID0gcGFyYW1zWzppbWFnZV91cmxdCgogICAgU3Vic2NyaWJlci5hbGwuZWFjaCBkbyB8c3wKICAgICAgYmVnaW4KICAgICAgICBzLnNlbmRfbWVzc2FnZShtZXNzYWdlLCBpbWFnZV91cmwpCiAgICAgICAgZmxhc2hbOnN1Y2Nlc3NdID0gIk1lc3NhZ2VzIG9uIHRoZWlyIHdheSEiCiAgICAgIHJlc2N1ZSAKICAgICAgICBmbGFzaFs6YWxlcnRdID0gIlNvbWV0aGluZyB3aGVuIHdyb25nLiIKICAgICAgZW5kCiAgICBlbmQKICAgIHJlZGlyZWN0X3RvICcvJwogIGVuZAoKICBkZWYgaW5kZXgKICBlbmQKCiAgcHJpdmF0ZQogICAgIyBVc2UgY2FsbGJhY2tzIHRvIHNoYXJlIGNvbW1vbiBzZXR1cCBvciBjb25zdHJhaW50cyBiZXR3ZWVuIGFjdGlvbnMuCgogICAgIyBQcm9jZXNzIGluY29taW5nIFNNUwogICAgZGVmIHByb2Nlc3NfbWVzc2FnZShtZXNzYWdlLCBzdWJzY3JpYmVyKQogICAgICBpZiBtZXNzYWdlID09ICdzdWJzY3JpYmUnIHx8IG1lc3NhZ2UgPT0gJ3Vuc3Vic2NyaWJlJwogICAgICAgICMgSWYgdGhlIHVzZXIgaGFzIHN1YnNjcmliZWQgZmxpcCB0aGUgYml0CiAgICAgICAgIyBhbmQgbGV0IHRoZW0ga25vdwogICAgICAgIHN1YnNjcmliZWQgPSBtZXNzYWdlID09PSAnc3Vic2NyaWJlJwogICAgICAgIHN1YnNjcmliZXIudXBkYXRlIDpzdWJzY3JpYmVkID0+IHN1YnNjcmliZWQKCiAgICAgICAgIyBSZXNwb25kIGFwcHJvcHJpYXRlbHkKICAgICAgICBvdXRwdXQgPSAiWW91IGFyZSBub3cgc3Vic2NyaWJlZCBmb3IgdXBkYXRlcy4iCiAgICAgICAgaWYgIXN1YnNjcmliZXIuc3Vic2NyaWJlZAogICAgICAgICAgb3V0cHV0ID0gIllvdSBoYXZlIHVuc3Vic2NyaWJlZCBmcm9tIG5vdGlmaWNhdGlvbnMuIFRlc3QgJ3N1YnNjcmliZScgdG8gc3RhcnQgcmVjZWlldmluZyB1cGRhdGVzIGFnYWluIgogICAgICAgIGVuZAogICAgICBlbHNlCiAgICAgICAgIyBJZiB3ZSBkb24ndCByZWNvZ25pemUgdGhlIGNvbW1hbmQsIHRleHQgYmFjayB3aXRoIHRoZSBsaXN0IG9mCiAgICAgICAgIyBhdmFpbGFibGUgY29tbWFuZHMKICAgICAgICBvdXRwdXQgPSAiU29ycnksIHdlIGRvbid0IHJlY29nbml6ZSB0aGF0IGNvbW1hbmQuIEF2YWlsYWJsZSBjb21tYW5kcyBhcmU6ICdzdWJzY3JpYmUnIG9yICd1bnN1YnNjcmliZScuIgogICAgICBlbmQKICAgICAgcmV0dXJuIG91dHB1dAogICAgZW5kCgogICAgIyBTZW5kIGFuIFNNUyBiYWNrIHRvIHRoZSBTdWJzY3JpYmVyCiAgICBkZWYgcmVzcG9uZChtZXNzYWdlKQogICAgICByZXNwb25zZSA9IFR3aWxpbzo6VHdpTUw6OlJlc3BvbnNlLm5ldyBkbyB8cnwKICAgICAgICByLk1lc3NhZ2UgbWVzc2FnZQogICAgICBlbmQKICAgICAgcmVuZGVyIHRleHQ6IHJlc3BvbnNlLnRleHQKICAgIGVuZAoKZW5kCg==</textarea>
+<textarea class="saurus-file" data-file="app/views/notifications/index.html.erb" data-mode="html_ruby">PGgxPlNNUyBOb3RpZmljYXRpb25zPC9oMT4KPHA+VXNlIHRoaXMgZm9ybSB0byBzZW5kIE1NUyBub3RpZmljYXRpb25zIHRvIGFueSBzdWJzY3JpYmVycy48L3A+Cgo8JT0gZm9ybV90YWcgJ25ldy8nLCBtZXRob2Q6ICJwb3N0IiBkbyAlPgogIDxkaXYgY2xhc3M9ImZvcm0tZ3JvdXAiPgogICAgPCU9IGxhYmVsX3RhZyA6bWVzc2FnZSwgIkVudGVyIGEgTWVzc2FnZToiICU+CiAgICA8JT0gdGV4dF9maWVsZF90YWcgOm1lc3NhZ2UsICcnLCBjbGFzczogImZvcm0tY29udHJvbCIsIHBsYWNlaG9sZGVyOiAiTmV3IHRoaW5ncyBhcmUgaGFwcGVuaW5nISIgJT4KICA8L2Rpdj4KICA8ZGl2IGNsYXNzPSJmb3JtLWdyb3VwIj4KICAgIDwlPSBsYWJlbF90YWcgOmltYWdlX3VybCwgIkltYWdlIFVybDoiICU+CiAgICA8JT0gdGV4dF9maWVsZF90YWcgOmltYWdlX3VybCwgJycsIGNsYXNzOiAiZm9ybS1jb250cm9sIiwgcGxhY2Vob2xkZXI6ICJodHRwOi8vZmFrZS50d2lsaW8uY29tL3NvbWVfaW1hZ2UucG5nIiAlPgogIDwvZGl2PgogIDxidXR0b24gdHlwZT0ic3VibWl0IiBjbGFzcz0iYnRuIGJ0bi1wcmltYXJ5Ij5TZW5kIE1lc3NhZ2U8L2J1dHRvbj4KPCUgZW5kIC0lPg==</textarea>
+</div>
+</div>
+      <div class="saurus-overview">
+        <ul></ul>
+      </div>
+    </div>
+    <div class="saurus-code">
+      <div class="file-path"><span class="crumb-container"></span><i class="fa fa-fw fa-folder"></i></div>
+      <div class="saurus-editor"></div>
+    </div>
+    <div class="saurus-explorer">
+      <div class="saurus-file-list"></div>
+    </div>
+  </div>
+</div></div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+    <script src="ace/ace.js"></script>
+    <script src="ace/theme-monokai.js"></script>
+    <script src="viewsaurus.js"></script>
+  </body>
+</html>

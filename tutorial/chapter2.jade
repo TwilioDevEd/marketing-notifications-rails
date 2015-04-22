@@ -24,13 +24,13 @@
 
     If the user has texted `subscribe` or `unsubscribe`, we will update their subscription status in the database. We will then respond to them via SMS with the opposite command to either opt in to updates or opt out.
 
-.step(data-title='Listing Available Commands', data-file='app/controllers/notifications_controller.rb', data-highlight='65-67')
+.step(data-title='Listing Available Commands', data-file='app/controllers/notifications_controller.rb', data-highlight='64-66')
   :markdown
     ## Listing Available Commands
 
     If they texted in something we don't recognize, we respond to them with a listing of all known commands. We could take this further and implement "help" text for each command, but in this simple use case the commands should be self-explanatory.
 
-.step(data-title='Responding with TwiML', data-file='app/controllers/notifications_controller.rb', data-highlight='72-79')
+.step(data-title='Responding with TwiML', data-file='app/controllers/notifications_controller.rb', data-highlight='72-77')
   :markdown
     ## Responding with TwiML
 
