@@ -16,13 +16,13 @@ class NotificationsControllerTest < ActionController::TestCase
   end
 
   test 'when subscriber exist and request contains subscribe then response should contains subscribed message' do
-    get :incoming, From: '555-5555', Body: 'subscribe'
+    get :incoming, From: '555-5555', Body: 'add'
     assert_response :success
     assert_contains("subscribed", xpath_content(response, '//Response//Message'))
   end
 
   test 'when subscriber exist and request contains unsubscribe then response should contains unsubscribed message' do
-    get :incoming, From: '555-5555', Body: 'unsubscribe'
+    get :incoming, From: '555-5555', Body: 'remove'
     assert_response :success
     assert_contains("unsubscribed", xpath_content(response, '//Response//Message'))
   end

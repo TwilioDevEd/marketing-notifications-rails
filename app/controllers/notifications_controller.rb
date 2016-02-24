@@ -14,7 +14,7 @@ class NotificationsController < ApplicationController
         body = params.fetch(:Body, '').downcase
         output = process_message(body, subscriber)
       else
-        output = "Thanks for contacting TWBC! Text 'subscribe' if you would to receive updates via text message."
+        output = "Thanks for contacting TWBC! Text 'add' if you would to receive updates via text message."
       end
     rescue
       output = "Something went wrong. Try again."
@@ -48,21 +48,21 @@ class NotificationsController < ApplicationController
 
   # Process incoming SMS
   def process_message(message, subscriber)
-    if message == 'subscribe' || message == 'unsubscribe'
+    if message == 'add' || message == 'remove'
       # If the user has subscribed flip the bit
       # and let them know
-      subscribed = message == 'subscribe'
+      subscribed = message == 'add'
       subscriber.update subscribed: subscribed
 
       # Respond appropriately
       output = "You are now subscribed for updates."
       if !subscriber.subscribed
-        output = "You have unsubscribed from notifications. Test 'subscribe' to start receieving updates again"
+        output = "You have unsubscribed from notifications. Test 'add' to start receieving updates again"
       end
     else
       # If we don't recognize the command, text back with the list of
       # available commands
-      output = "Sorry, we don't recognize that command. Available commands are: 'subscribe' or 'unsubscribe'."
+      output = "Sorry, we don't recognize that command. Available commands are: 'add' or 'remove'."
     end
     return output
   end
