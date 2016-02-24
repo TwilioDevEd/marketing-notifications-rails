@@ -78,7 +78,7 @@
 
     We begin by getting the texter's phone number from the [incoming Twilio request](/docs/api/twiml/sms/twilio_request). Now, we need to find a `Subscriber` model with that phone number (this should be a unique property of the `Subscriber`).
 
-    If there's no subscriber with this phone number, we create one, save it, and respond with a message asking them to text "subscribe" to confirm that they want to receive messages from us.
+    If there's no subscriber with this phone number, we create one, save it, and respond with a message asking them to text "add" to confirm that they want to receive messages from us.
 
     And that's all we want at this step! We've created a `Subscriber` model to keep track of the people that want our messages, and saved them in the database when they text us for the first time.
 
