@@ -5,11 +5,11 @@
 
       Ready to implement SMS and MMS marketing notifications? Here's how it works at a high level:
 
-      1. A user you'd like to reach sends an SMS text message to a Twilio phone number you advertise in print, online, or in TV advertising
+      1. A user you'd like to reach sends an SMS text message to a Twilio phone number you advertise in print, online or in TV.
 
-      1. Your application confirms that the user wants to receive SMS and MMS notifications from your application
+      1. Your application confirms that the user wants to receive SMS and MMS notifications.
 
-      1. An administrator or marketing campaign manager uses a web form to craft a message that will go out to all subscribers via SMS/MMS message
+      1. An administrator or marketing campaign manager uses a web form to craft a message that will go out to all subscribers via SMS/MMS message.
 
       ## Building Blocks
 
@@ -24,9 +24,10 @@
     :markdown
       ## Creating a Subscriber
 
-      We begin by generating an [Active Record](http://guides.rubyonrails.org/active_record_basics.html) model that we will store in a postgres database. For our purposes we don't need to store very much information about the subscriber - just their phone number (so we can send them updates) and a boolean flag indicating whether or not they are opted-in to receive updates.
+      We begin by generating an [Active Record](http://guides.rubyonrails.org/active_record_basics.html) model that we will store in a postgres database. For our purposes we don't need to store very much information about the subscriber - only their phone number (so we can send them updates) and a boolean flag indicating whether or not they are opted-in to receive updates.
 
       We'll use the [Rails generate command](http://guides.rubyonrails.org/command_line.html#rails-generate) to create our model:
+
       ``` bin/rails generate model Subscriber phone_number:string subscribed:boolean ```
 
       This generator creates our model, migration and schema for us. Now all we need to run is `rake db:migrate` and we have a table of Subscribers.
@@ -43,22 +44,23 @@
     :markdown
       ## Creating a New Subscriber
 
-      We begin by getting the texter's phone number from the [incoming Twilio request](/docs/api/twiml/sms/twilio_request). Now, we need to find a `Subscriber` model with that phone number (this should be a unique property of the `Subscriber`).
+      We begin by getting the user's phone number from the [incoming Twilio request](/docs/api/twiml/sms/twilio_request). Now, we need to find a `Subscriber` model with that phone number (this should be a unique property of the `Subscriber`).
 
       If there's no subscriber with this phone number, we create one, save it, and respond with a message asking them to text "add" to confirm that they want to receive messages from us.
 
-      And that's all we want at this step! We've created a `Subscriber` model to keep track of the people that want our messages, and saved them in the database when they text us for the first time.
+      We've created a `Subscriber` model to keep track of the people that want to receive our messages, and we have learned how to save them in the database when they text us for the first time.
 
       Next, let's look at the logic we need to put in place to allow them to manage their subscription status.
 .chapter(data-title='Managing Subscriptions')
-  .step(data-title='User Story: Manage Subscriptions', data-file='app/controllers/notifications_controller.rb', data-highlight='')
+  .step(data-title='User Story: Managing Subscriptions', data-file='app/controllers/notifications_controller.rb', data-highlight='')
       :markdown
         ## Managing Subscriptions
-        We want to provide the user with two SMS commands to manage their subscription status: `add` and `remove`.  These commands will toggle a boolean flag for their `Subscriber` record in the database, and will determine whether or not they receive messages from our marketing campaign. Because we're not jerks, we don't opt them in automatically - rather, we have them confirm that they want to receive messages from us first.
+
+        We want to provide the user with two SMS commands to manage their subscription status: `add` and `remove`.  These commands will toggle a boolean flag for their `Subscriber` record in the database, and will determine whether or not they receive messages from our marketing campaign. Because we want to respect our users' preferences, we don't opt them in automatically - rather, we have them confirm that they want to receive messages from us first.
 
         To make this happen, we will need to update the controller logic which handles the incoming text message to do a couple things:
 
-        * If the texter is a person already in the database, parse the message they sent to see if it's a command we recognize
+        * If the user is a person already in the database, parse the message they sent to see if it's a command we recognize
         * If it is a `add` or `remove` command, update their subscription status in the database
         * If it is a command we don't recognize, send them a message explaining available commands.
 
@@ -106,6 +108,5 @@
 
       ### Did this help?
 
-      Thanks for checking out this tutorial! If you have any feedback to share
-      with us, we'd love to hear it. [Contact support](//www.twilio.com/help/contact) to let 
-      us know what you think. 
+      Thanks for checking this tutorial out! If you have any feedback to share
+      with us, we'd love to hear it. [Contact the Twilio Developer Education Team](mailto:deved-oss@twilio.com) to let us know what you think.
