@@ -18,7 +18,8 @@ Hit the button!
 
 ## Local Development
 
-Clone this repository and cd into the directory then.
+
+1. First clone this repository and cd into it
 
   ```
   $ git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
