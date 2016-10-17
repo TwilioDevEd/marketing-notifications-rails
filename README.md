@@ -1,4 +1,9 @@
-# SMS Notifications
+<a href="https://www.twilio.com">
+  <img src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg" alt="Twilio" width="250" />
+</a>
+
+# SMS Notifications with Ruby on Rails and Twilio
+
 [![build Status](https://travis-ci.org/TwilioDevEd/marketing-notifications-rails.svg?branch=master)](https://travis-ci.org/TwilioDevEd/marketing-notifications-rails)
 
 Use Twilio to create sms notifications to keep your subscribers in the loop.
@@ -9,88 +14,73 @@ Use Twilio to create sms notifications to keep your subscribers in the loop.
 
 Hit the button!
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-## Running the application
+## Local Development
 
+This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
 
-1. First clone this repository and `cd` into it
+1. First clone this repository and `cd` into it.
 
-```
-git clone git@github.com:TwilioDevEd/marketing-notifications-sinatra.git
-cd marketing-notifications-sinatra
-```
+   ```
+   $ git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
+   $ cd marketing-notifications-rails
+   ```
 
-1. Install dependencies
+1. Install the dependencies.
 
-```
-bundle
-```
+   ```
+   $ bundle install
+   ```
 
-1. Create application's database
+1. Copy the `.env.example` file to `.env`, and edit it including your credentials
+   for the Twilio API (found at https://www.twilio.com/console/account/settings).
+   You will also need a [Twilio Number](https://www.twilio.com/console/phone-numbers/incoming).
 
-Make sure you have installed [PostgreSQL](http://www.postgresql.org/). If on a Mac, I recommend [Postgres.app](http://postgresapp.com). Given that, we'll use a rake task to generate the database used by the app. You just need to provide a valid user with permission to create databases.
+   Run `source .env` to export the environment variables.
 
-```
-bundle exec rake db:create db:migrate
-```
+1. Create the database and run migrations.
 
-1. Export environment variables.
+   Make sure you have installed [PostgreSQL](http://www.postgresql.org/). If on
+   a Mac, I recommend [Postgres.app](http://postgresapp.com).
 
-You can find `AccountSID` and the `AuthToken` at [https://www.twilio.com/user/account/settings](https://www.twilio.com/user/account/settings).
+   ```bash
+   $ bundle exec rake db:setup
+   ```
 
-```
-export TWILIO_ACCOUNT_SID=your account sid
-export TWILIO_AUTH_TOKEN=your auth token
-export TWILIO_NUMBER=your twilio number
+1. Make sure the tests succeed.
 
-```
+   ```
+   $ bundle exec rake
+   ```
 
-1. Make sure the tests succeed
+1. Start the development server.
 
-```
-bundle exec rake spec
-```
+   ```bash
+   $ bundle exec rails s
+   ```
 
-1. Run the server
+1. Twilio will use a publicly accessible endpoint that we need to expose. We recommend using
+   [ngrok](https://www.twilio.com/blog/2013/10/test-your-webhooks-locally-with-ngrok.html)
+   to solve this problem.
 
-```
-rails server
-```
+   ```bash
+   ngrok http 3000
+   ```
 
-1. Expose application endpoint
+1. Configure Twilio to call your webhooks.
 
-In order to receive subscribers you will need to point a Twilio number to the app running.
-To do that we can use [ngrok](https://ngrok.com/) to expose the application
-to the wilder internet.
+   You will also need to configure Twilio to call your application when SMSs are received on your `TWILIO_NUMBER`. Your urls should look something like this:
 
-```
-  ngrok http 3000
-```
+   ```
+   sms:   http://9a159ccf.ngrok.io/incoming
+   ```
 
+   ![Configure webhooks](http://howtodocs.s3.amazonaws.com/twilio-number-config-all-med.gif)
 
-1. Configure your Twilio number
+1. Check it out at [http://localhost:3000](http://localhost:3000).
 
-Go to your dashboard on [Twilio](https://www.twilio.com/user/account/phone-numbers/incoming).
-Click on Twilio Numbers and choose a number to setup.
-On the phone number page, enter the address provided by ngrok into the _Messaging_ Request URL field.
-
-![Request URL](http://howtodocs.s3.amazonaws.com/setup-twilio-number.png)
-
-1. Wrap Up!
-
-By now, your application should be up and running at [http://localhost:3000/](http://localhost:3000).
-Now your subscribers will be able to text your new Twilio number to Subscribe
-to your Marketing Notifications line.
-
-Congratulations!
-
-## Dependencies
-
-This application uses this Twilio helper library:
-* twilio-ruby
-
-Please visit these libraries and pay your respects.
+That's it!
 
 ## Meta
 
