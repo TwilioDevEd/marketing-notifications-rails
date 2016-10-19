@@ -20,7 +20,7 @@ Hit the button!
 
 This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
 
-1. First clone this repository and `cd` into it
+1. First clone this repository and `cd` into it.
 
    ```
    $ git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
