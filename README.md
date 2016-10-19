@@ -2,7 +2,7 @@
   <img src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg" alt="Twilio" width="250" />
 </a>
 
-# SMS Notifications - Rails
+# SMS Notifications with Ruby on Rails and Twilio
 
 [![build Status](https://travis-ci.org/TwilioDevEd/marketing-notifications-rails.svg?branch=master)](https://travis-ci.org/TwilioDevEd/marketing-notifications-rails)
 
@@ -18,78 +18,65 @@ Hit the button!
 
 ## Local Development
 
+This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
 
 1. First clone this repository and `cd` into it
 
-  ```
-  $ git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
-  $ cd marketing-notifications-rails
-  ```
-
-1. Install dependencies
-
-  ```
-  $ bundle install
-  ```
-
-1. Expose your application to the wider internet using [ngrok](http://ngrok.com). This step
-   is important because the application won't work as expected if you run it through
-   localhost.
-
-   ```bash
-   $ ngrok http 3000
+   ```
+   $ git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
+   $ cd marketing-notifications-rails
    ```
 
-   Your ngrok URL should look something like this: `http://9a159ccf.ngrok.io`
+1. Install the dependencies.
 
-   You can read [this blog post](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html)
-   for more details on how to use ngrok.
+   ```
+   $ bundle install
+   ```
 
-1. Configure Twilio to call your webhooks
+1. Copy the `.env.example` file to `.env`, and edit it including your credentials
+   for the Twilio API (found at https://www.twilio.com/console/account/settings).
+   You will also need a [Twilio Number](https://www.twilio.com/console/phone-numbers/incoming).
 
-   You will also need to configure Twilio to call your application when calls or SMSs are received on your `TWILIO_NUMBER`. Your urls should look something like this:
+   Run `source .env` to export the environment variables.
+
+1. Create the database and run migrations.
+
+   Make sure you have installed [PostgreSQL](http://www.postgresql.org/). If on
+   a Mac, I recommend [Postgres.app](http://postgresapp.com).
+
+   ```bash
+   $ bundle exec rake db:setup
+   ```
+
+1. Make sure the tests succeed.
+
+   ```
+   $ bundle exec rake
+   ```
+
+1. Start the development server.
+
+   ```bash
+   $ bundle exec rails s
+   ```
+
+1. Twilio will use a publicly accessible endpoint that we need to expose. We recommend using
+   [ngrok](https://www.twilio.com/blog/2013/10/test-your-webhooks-locally-with-ngrok.html)
+   to solve this problem.
+
+   ```bash
+   ngrok http 3000
+   ```
+
+1. Configure Twilio to call your webhooks.
+
+   You will also need to configure Twilio to call your application when SMSs are received on your `TWILIO_NUMBER`. Your urls should look something like this:
 
    ```
    sms:   http://9a159ccf.ngrok.io/incoming
    ```
 
    ![Configure webhooks](http://howtodocs.s3.amazonaws.com/twilio-number-config-all-med.gif)
-
-1. Create application's database
-
-  Make sure you have installed [PostgreSQL](http://www.postgresql.org/). If on a Mac, I recommend [Postgres.app](http://postgresapp.com). Given that, we'll use a rake task to generate the database used by the app. You just need to provide a valid user with permission to create databases.
-
-  ```
-  $ bundle exec rake db:create db:migrate
-  ```
-
-1. Copy the sample configuration file and edit it to match your configuration.
-
-   ```bash
-   $ cp .env.example .env
-   ```
-
-   You can find your `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` in your
-   [Twilio Account Settings](https://www.twilio.com/console/account/settings).
-   You will also need a `TWILIO_NUMBER`, which you may find [here](https://www.twilio.com/console/phone-numbers/incoming).
-
-   Run:
-   ```bash
-   $ source .env
-   ```
-   to export the environment variables.
-
-1. Make sure the tests succeed
-
-  ```
-  $ bundle exec rake
-  ```
-
-1. Start the server.
-
-   ```bash
-   $ bundle exec rails s
-   ```
 
 1. Check it out at [http://localhost:3000](http://localhost:3000).
 
