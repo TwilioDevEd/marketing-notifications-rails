@@ -69,9 +69,8 @@ class NotificationsController < ApplicationController
 
   # Send an SMS back to the Subscriber
   def respond(message)
-    response = Twilio::TwiML::Response.new do |r|
-      r.Message message
-    end
-    render text: response.text
+    response = Twilio::TwiML::MessagingResponse.new
+    response.message(message)
+    render xml: response.to_xml_str
   end
 end

@@ -23,14 +23,14 @@ This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
 1. First clone this repository and `cd` into it.
 
    ```
-   $ git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
-   $ cd marketing-notifications-rails
+   git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
+   cd marketing-notifications-rails
    ```
 
 1. Install the dependencies.
 
    ```
-   $ bundle install
+   bundle install
    ```
 
 1. Copy the `.env.example` file to `.env`, and edit it including your credentials
@@ -45,19 +45,19 @@ This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
    a Mac, I recommend [Postgres.app](http://postgresapp.com).
 
    ```bash
-   $ bundle exec rake db:setup
+   bundle exec rake db:setup
    ```
 
 1. Make sure the tests succeed.
 
    ```
-   $ bundle exec rake
+   bundle exec rake
    ```
 
 1. Start the development server.
 
    ```bash
-   $ bundle exec rails s
+   bundle exec rails s
    ```
 
 1. Twilio will use a publicly accessible endpoint that we need to expose. We recommend using
