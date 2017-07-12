@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - rvm 2.1.1
+  - rvm 2.3.4
 
 install:
   - bundle
@@ -11,4 +11,3 @@ addons:
 before_script:
   - RAILS_ENV=test rake db:create db:migrate
   - rake test
-
