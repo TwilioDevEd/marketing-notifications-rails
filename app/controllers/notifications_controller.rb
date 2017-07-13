@@ -33,7 +33,7 @@ class NotificationsController < ApplicationController
       begin
         s.send_message(message, image_url)
         flash[:success] = "Messages on their way!"
-      rescue 
+      rescue
         flash[:alert] = "Something when wrong."
       end
     end
@@ -69,9 +69,8 @@ class NotificationsController < ApplicationController
 
   # Send an SMS back to the Subscriber
   def respond(message)
-    response = Twilio::TwiML::Response.new do |r|
-      r.Message message
-    end
-    render text: response.text
+    response = Twilio::TwiML::MessagingResponse.new
+    response.message(body: message)
+    render xml: response.to_s
   end
 end
