@@ -10,12 +10,6 @@ Use Twilio to create sms notifications to keep your subscribers in the loop.
 
 [Read the full tutorial here](https://www.twilio.com/docs/tutorials/walkthrough/marketing-notifications/ruby/rails)!
 
-## Deploy to Heroku
-
-Hit the button!
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
 ## Local Development
 
 This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
