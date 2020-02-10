@@ -4,11 +4,11 @@
 <%= form_tag 'new/', method: "post" do %>
   <div class="form-group">
     <%= label_tag :message, "Enter a Message:" %>
-    <%= text_field_tag :message, '', class: "form-control", placeholder: "New things are happening!" %>
+    <%= text_field_tag :message, '', class: "form-control", placeholder: "New things are happening!", required: "required" %>
   </div>
   <div class="form-group">
     <%= label_tag :image_url, "Image Url:" %>
-    <%= text_field_tag :image_url, '', class: "form-control", placeholder: "http://fake.twilio.com/some_image.png" %>
+    <%= text_field_tag :image_url, '', class: "form-control", placeholder: "http://fake.twilio.com/some_image.png", required: "required" %>
   </div>
   <button type="submit" class="btn btn-primary">Send Message</button>
 <% end -%>

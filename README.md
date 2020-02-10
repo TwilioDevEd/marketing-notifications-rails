@@ -70,8 +70,6 @@ This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
    sms:   http://9a159ccf.ngrok.io/incoming
    ```
 
-   ![Configure webhooks](http://howtodocs.s3.amazonaws.com/twilio-number-config-all-med.gif)
-
 1. Check it out at [http://localhost:3000](http://localhost:3000).
 
 That's it!
