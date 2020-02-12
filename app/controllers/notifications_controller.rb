@@ -29,13 +29,13 @@ class NotificationsController < ApplicationController
     message = params[:message]
     image_url = params[:image_url]
 
-    Subscriber.all.each do |s|
-      begin
-        s.send_message(message, image_url)
-        flash[:success] = "Messages on their way!"
-      rescue
-        flash[:alert] = "Something when wrong."
+    begin
+      Subscriber.where(:subscribed => true).each do |s|
+        s.send_message message, image_url
       end
+      flash[:success] = "Messages on their way!"
+    rescue Exception => e
+      flash[:alert] = "Something when wrong: #{e.message}"
     end
     redirect_to '/'
   end
@@ -57,14 +57,14 @@ class NotificationsController < ApplicationController
       # Respond appropriately
       output = "You are now subscribed for updates."
       if !subscriber.subscribed
-        output = "You have unsubscribed from notifications. Test 'add' to start receieving updates again"
+        output = "You have unsubscribed from notifications. Test 'add' to start receiving updates again"
       end
     else
       # If we don't recognize the command, text back with the list of
       # available commands
       output = "Sorry, we don't recognize that command. Available commands are: 'add' or 'remove'."
     end
-    return output
+    output
   end
 
   # Send an SMS back to the Subscriber
