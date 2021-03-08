@@ -1,66 +1,47 @@
-<a href="https://www.twilio.com">
-  <img src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg" alt="Twilio" width="250" />
+<a  href="https://www.twilio.com">
+<img  src="https://static0.twilio.com/marketing/bundles/marketing/img/logos/wordmark-red.svg"  alt="Twilio"  width="250"  />
 </a>
-
+ 
 # SMS Notifications with Ruby on Rails and Twilio
 
-[![build Status](https://travis-ci.org/TwilioDevEd/marketing-notifications-rails.svg?branch=master)](https://travis-ci.org/TwilioDevEd/marketing-notifications-rails)
+![](https://github.com/TwilioDevEd/marketing-notifications-rails/actions/workflows/build.yml/badge.svg)
+
+## About
 
 Use Twilio to create sms notifications to keep your subscribers in the loop.
 
 [Read the full tutorial here](https://www.twilio.com/docs/tutorials/walkthrough/marketing-notifications/ruby/rails)!
 
-## Local Development
+## Local development
 
-This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
+This project is built using [Ruby on Rails](http://rubyonrails.org/) and [NodeJS](https://nodejs.org/en/) Frameworks.
 
 1. First clone this repository and `cd` into it.
 
    ```
-   git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
-   cd marketing-notifications-rails
+   $ git clone git@github.com:TwilioDevEd/marketing-notifications-rails.git
+   $ cd marketing-notifications-rails
    ```
 
-1. Install the dependencies.
-
+1. Install Rails the dependencies.
    ```
-   bundle install
+   $ bundle install
    ```
 
-1. Copy the `.env.example` file to `.env`, and edit it including your credentials
-   for the Twilio API (found at https://www.twilio.com/console/account/settings).
-   You will also need a [Twilio Number](https://www.twilio.com/console/phone-numbers/incoming).
+1. Install Webpack the dependencies.
+   ```
+   $ npm install
+   ```
 
-   Run `source .env` to export the environment variables.
-
-1. Create the database and run migrations.
-
-   Make sure you have installed [PostgreSQL](http://www.postgresql.org/). If on
-   a Mac, I recommend [Postgres.app](http://postgresapp.com).
-
+1. Expose your application to the wider internet using [ngrok](http://ngrok.com). This step is important because the application won't work as expected if you run it through localhost.
    ```bash
-   bundle exec rake db:setup
+   $ ngrok http 3000
    ```
 
-1. Make sure the tests succeed.
+   Your ngrok URL should look something like this: `http://9a159ccf.ngrok.io`
 
-   ```
-   bundle exec rake
-   ```
-
-1. Start the development server.
-
-   ```bash
-   bundle exec rails s
-   ```
-
-1. Twilio will use a publicly accessible endpoint that we need to expose. We recommend using
-   [ngrok](https://www.twilio.com/blog/2013/10/test-your-webhooks-locally-with-ngrok.html)
-   to solve this problem.
-
-   ```bash
-   ngrok http 3000
-   ```
+   You can read [this blog post](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html)
+   for more details on how to use ngrok.
 
 1. Configure Twilio to call your webhooks.
 
@@ -70,12 +51,40 @@ This project is built using [Ruby on Rails](http://rubyonrails.org/) Framework.
    sms:   http://9a159ccf.ngrok.io/incoming
    ```
 
-1. Check it out at [http://localhost:3000](http://localhost:3000).
+1. Copy the sample configuration file and edit it to match your configuration.
 
-That's it!
+   ```bash
+   $ cp .env.example .env
+   ```
+
+   You can find your `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` in your
+   [Twilio Account Settings](https://www.twilio.com/console/account/settings).
+   You will also need a `TWIML_APPLICATION_SID`, which you may find [here](https://www.twilio.com/console/phone-numbers/runtime/twiml-apps). The webhooks can be left empty as they will be configured later.
+
+1. Create database and run migrations.
+
+   _Make sure you have installed [PostgreSQL](http://www.postgresql.org/). If on a Mac, I recommend [Postgres.app](http://postgresapp.com)_
+
+   ```bash
+   $ bundle exec rails db:setup
+   ```
+
+1. Make sure the tests succeed.
+
+   ```bash
+   $ bundle exec test
+   ```
+
+1. Start the server.
+
+   ```bash
+   $ bundle exec rails s
+   ```
+
+1. Check it out at [http://localhost:3000](http://localhost:3000)
 
 ## Meta
 
 * No warranty expressed or implied. Software is as is. Diggity.
-* [MIT License](http://www.opensource.org/licenses/mit-license.html)
+* [MIT License](LICENSE)
 * Lovingly crafted by Twilio Developer Education.
