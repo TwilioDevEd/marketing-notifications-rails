@@ -67,7 +67,7 @@ jobs:
       - name: Run tests
         run: |
           cp .env.example .env
-          bundle exec test
+          bundle exec rails test
         env:
           PGHOST: localhost
           PGUSER: postgres
