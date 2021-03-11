@@ -72,7 +72,7 @@ This project is built using [Ruby on Rails](http://rubyonrails.org/) and [NodeJS
 1. Make sure the tests succeed.
 
    ```bash
-   $ bundle exec test
+   $ bundle exec rails test
    ```
 
 1. Start the server.
